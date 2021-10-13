@@ -10,6 +10,9 @@ import android.widget.TextView;
 
 import com.google.android.material.button.MaterialButtonToggleGroup;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
                 String urlApi = "https://blockchain.info/ticker";
                 String cep = "62370000";
                 String urlCep = "https://viacep.com.br/ws/"+cep+"/json/";
-                task.execute(urlCep);
+                task.execute(urlApi);
             }
         });
 
@@ -88,9 +91,32 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-            textViewRecuperar.setText( s );
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+
+            //String logradouro = null;
+
+            String objetoValor  = null;
+            String valorMoeda   = null;
+            String simbolo      = null;
+
+            try {
+                /*JSONObject jsonObject = new JSONObject(result);
+                logradouro = jsonObject.getString("localidade");*/
+
+
+                JSONObject jsonObject = new JSONObject(result);
+                objetoValor = jsonObject.getString("BRL");
+
+                JSONObject jsonObjectReal = new JSONObject(objetoValor);
+                valorMoeda  = jsonObjectReal.getString("last");
+                simbolo     = jsonObjectReal.getString("symbol");
+
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            textViewRecuperar.setText( simbolo+" "+valorMoeda );
         }
     }
 }
